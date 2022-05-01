@@ -35,3 +35,9 @@ def profile(userid: int = 10, commentid: int = 100):
     return {
         f"Profile page for user with user id {userid} and comment with :{commentid}"
     }
+
+
+# Required Query Parameters
+@app.get("/bikes")
+def bikes(id: int = None, price: int = None):
+    return {f"Cars with an id:{id} and price:{price}"}
