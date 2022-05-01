@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, HttpUrl
 from typing import Set
 
 
@@ -7,6 +7,11 @@ class Profile(BaseModel):
     name: str
     email: str
     age: int
+
+
+class Image(BaseModel):
+    url: HttpUrl
+    name: str
 
 
 class Product(BaseModel):
@@ -17,6 +22,7 @@ class Product(BaseModel):
     discount: int
     discounted_price: float
     tags: Set[str] = []
+    image: Image
 
 
 class User(BaseModel):
