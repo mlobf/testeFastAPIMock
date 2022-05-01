@@ -3,6 +3,11 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
+# id here is a path parameter
+@app.get("/parameters/{id}")
+def index(id):
+    return {f"Hello to Paramete's World!!{id}"}
+
 
 @app.get("/")
 def index():
