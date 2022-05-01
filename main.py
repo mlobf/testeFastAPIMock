@@ -63,7 +63,7 @@ def add_user(profile: Profile):
     return profile
 
 
-@app.post("/add_product/")
-def add_product(product: Product):
+@app.post("/add_product/{product_id}")
+def add_product(product: Product, product_id: int, category: str):
     product.discounted_price = product.price - (product.price * product.discount) / 100
-    return product
+    return {"product_id": product_id, "product": product, "category": category}
