@@ -1,4 +1,18 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
+
+
+class Profile(BaseModel):
+    name: str
+    email: str
+    age: int
+
+
+class Product(BaseModel):
+    name: str
+    price: int
+    discount: int
+    discounted_price: float
 
 
 app = FastAPI()
@@ -41,3 +55,15 @@ def profile(userid: int = 10, commentid: int = 100):
 @app.get("/bikes")
 def bikes(id: int = None, price: int = None):
     return {f"Cars with an id:{id} and price:{price}"}
+
+
+# Post
+@app.post("/add_user/")
+def add_user(profile: Profile):
+    return profile
+
+
+@app.post("/add_product/")
+def add_product(product: Product):
+    product.discounted_price = product.price - (product.price * product.discount) / 100
+    return product
