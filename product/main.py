@@ -31,6 +31,27 @@ def get_product(id, db: Session = Depends(get_db)):
     return product
 
 
+@app.delete("/product/{id}")
+def delete_product(id, db: Session = Depends(get_db)):
+    product = (
+        db.query(models.Product)
+        .filter(models.Product.id == id)
+        .delete(synchronize_session=False)
+    )
+    db.commit()
+    return {"Data deleted"}
+
+
+@app.put("/product/{id}")
+def update_product(id, request: schemas.Product, db: Session = Depends(get_db)):
+    product = db.query(models.Product).filter(models.Product.id == id)
+    if not product.first():
+        pass
+    product.update(request.dict())
+    db.commit()
+    return {"Product successfully updated"}
+
+
 @app.post("/product")
 def add_product(request: schemas.Product, db: Session = Depends(get_db)):
     new_product = models.Product(
