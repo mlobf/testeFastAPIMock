@@ -1,12 +1,25 @@
+from timeit import repeat
+from uuid import UUID
 from fastapi import FastAPI
 from pydantic import BaseModel, Field, HttpUrl
 from typing import Set, List
+from uuid import UUID
+from datetime import date, datetime, time, timedelta
 
 
 class Profile(BaseModel):
     name: str
     email: str
     age: int
+
+
+class Event(BaseModel):
+    event_id: UUID
+    start_date: date
+    start_time: datetime
+    end_time: datetime
+    repeat_time: time
+    execute_after: timedelta
 
 
 class Image(BaseModel):
@@ -41,7 +54,7 @@ class Product(BaseModel):
 
 
 class Offer(BaseModel):
-    name: str
+    name: str = Field(example="Black Friday")
     description: str
     price: float
     products: List[Product]
@@ -58,6 +71,11 @@ app = FastAPI()
 @app.post("/add_offer")
 def purchase(offer: Offer):
     return {"offer": offer}
+
+
+@app.post("/add_event")
+def add_event(event: Event):
+    return event
 
 
 @app.post("/purchase")
