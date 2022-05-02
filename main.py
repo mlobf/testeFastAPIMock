@@ -1,6 +1,4 @@
-from timeit import repeat
-from uuid import UUID
-from fastapi import FastAPI
+from fastapi import FastAPI, Form
 from pydantic import BaseModel, Field, HttpUrl
 from typing import Set, List
 from uuid import UUID
@@ -66,6 +64,11 @@ class User(BaseModel):
 
 
 app = FastAPI()
+
+
+@app.post("/login")
+def login(username: str = Form(...), password: str = Form(...)):
+    return {"username": username}
 
 
 @app.post("/add_offer")
