@@ -1,7 +1,3 @@
-from email.policy import HTTP
-from os import sched_getscheduler
-from urllib import response
-from xxlimited import new
 from fastapi import FastAPI, status, Response, HTTPException
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
@@ -72,6 +68,7 @@ def add_product(request: schemas.Product, db: Session = Depends(get_db)):
         name=request.name,
         description=request.description,
         price=request.price,
+        seller_id=1,
     )
     db.add(new_product)
     db.commit()
@@ -81,7 +78,9 @@ def add_product(request: schemas.Product, db: Session = Depends(get_db)):
 
 
 # -----------------------------------------------------------------------------
-@app.post("/seller")
+@app.post(
+    "/seller", response_model=schemas.DisplaySeller, status_code=status.HTTP_201_CREATED
+)
 def create_seller(request: schemas.Seller, db: Session = Depends(get_db)):
     hashedpassword = pwd_context.hash(request.password)
     new_seller = models.Seller(
