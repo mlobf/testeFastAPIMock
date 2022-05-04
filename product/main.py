@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+from email.policy import HTTP
+from urllib import response
+from fastapi import FastAPI, status, Response, HTTPException
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
 from . import schemas
@@ -28,8 +30,12 @@ def get_products(db: Session = Depends(get_db)):
 
 # --------------------------------------------------------------------------------
 @app.get("/product/{id}", response_model=schemas.DisplayProduct)
-def get_product(id, db: Session = Depends(get_db)):
+def get_product(id, response: Response, db: Session = Depends(get_db)):
     product = db.query(models.Product).filter(models.Product.id == id).first()
+    if not product:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Product not found."
+        )
     return product
 
 
@@ -55,7 +61,7 @@ def update_product(id, request: schemas.Product, db: Session = Depends(get_db)):
     return {"Product successfully updated"}
 
 
-@app.post("/product")
+@app.post("/product", status_code=status.HTTP_201_CREATED)
 def add_product(request: schemas.Product, db: Session = Depends(get_db)):
     new_product = models.Product(
         name=request.name,
