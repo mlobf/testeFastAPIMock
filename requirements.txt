@@ -6,3 +6,5 @@ flake8
 fastapi[all]
 uvicorn[standard]
 sqlalchemy
+passlib
+bcrypt

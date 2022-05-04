@@ -1,5 +1,7 @@
 from email.policy import HTTP
+from os import sched_getscheduler
 from urllib import response
+from xxlimited import new
 from fastapi import FastAPI, status, Response, HTTPException
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
@@ -7,11 +9,14 @@ from . import schemas
 from . import models
 from .database import engine, SessionLocal
 from typing import List
+from passlib.context import CryptContext
 
 
 app = FastAPI()
 
 models.Base.metadata.create_all(engine)
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def get_db():
@@ -73,3 +78,19 @@ def add_product(request: schemas.Product, db: Session = Depends(get_db)):
     db.refresh(new_product)
 
     return request
+
+
+# -----------------------------------------------------------------------------
+@app.post("/seller")
+def create_seller(request: schemas.Seller, db: Session = Depends(get_db)):
+    hashedpassword = pwd_context.hash(request.password)
+    new_seller = models.Seller(
+        username=request.username,
+        email=request.email,
+        password=hashedpassword,
+    )
+
+    db.add(new_seller)
+    db.commit()
+    db.refresh(new_seller)
+    return new_seller

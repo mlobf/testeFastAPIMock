@@ -17,3 +17,20 @@ class DisplayProduct(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class Seller(BaseModel):
+    username: str
+    email: str
+    password: str
+
+
+class DisplaySeller(BaseModel):
+
+    # Using Python3.9 the id must be declared.
+    id: int
+    username: str
+    email: str
+
+    class Config:
+        orm_mode = True
