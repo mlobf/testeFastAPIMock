@@ -7,7 +7,7 @@ from .. import schemas
 from passlib.context import CryptContext
 
 
-router = APIRouter()
+router = APIRouter(tags=["Sellers"])
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -16,7 +16,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     "/seller",
     response_model=schemas.DisplaySeller,
     status_code=status.HTTP_201_CREATED,
-    tags=["Sellers"],
 )
 def create_seller(request: schemas.Seller, db: Session = Depends(get_db)):
     hashedpassword = pwd_context.hash(request.password)

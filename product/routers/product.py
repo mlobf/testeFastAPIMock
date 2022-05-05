@@ -7,17 +7,17 @@ from typing import List
 from .. import schemas
 
 
-router = APIRouter()
+router = APIRouter(tags=["Products"])
 
 
-@router.get("/products", response_model=List[schemas.DisplayProduct], tags=["Products"])
+@router.get("/products", response_model=List[schemas.DisplayProduct])
 def get_products(db: Session = Depends(get_db)):
     products = db.query(models.Product).all()
     return products
 
 
 # --------------------------------------------------------------------------------
-@router.get("/product/{id}", response_model=schemas.DisplayProduct, tags=["Products"])
+@router.get("/product/{id}", response_model=schemas.DisplayProduct)
 def get_product(id, response: Response, db: Session = Depends(get_db)):
     product = db.query(models.Product).filter(models.Product.id == id).first()
     if not product:
@@ -28,7 +28,7 @@ def get_product(id, response: Response, db: Session = Depends(get_db)):
 
 
 # --------------------------------------------------------------------------------
-@router.delete("/product/{id}", tags=["Products"])
+@router.delete("/product/{id}")
 def delete_product(id, db: Session = Depends(get_db)):
     product = (
         db.query(models.Product)
@@ -39,7 +39,7 @@ def delete_product(id, db: Session = Depends(get_db)):
     return {"Data deleted"}
 
 
-@router.put("/product/{id}", tags=["Products"])
+@router.put("/product/{id}")
 def update_product(id, request: schemas.Product, db: Session = Depends(get_db)):
     product = db.query(models.Product).filter(models.Product.id == id)
     if not product.first():
@@ -49,7 +49,7 @@ def update_product(id, request: schemas.Product, db: Session = Depends(get_db)):
     return {"Product successfully updated"}
 
 
-@router.post("/product", status_code=status.HTTP_201_CREATED, tags=["Products"])
+@router.post("/product", status_code=status.HTTP_201_CREATED)
 def add_product(request: schemas.Product, db: Session = Depends(get_db)):
     new_product = models.Product(
         name=request.name,
