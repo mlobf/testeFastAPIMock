@@ -1,4 +1,3 @@
-from product.models import Product
 from pydantic import BaseModel
 
 

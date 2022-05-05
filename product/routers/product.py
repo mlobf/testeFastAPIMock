@@ -10,14 +10,14 @@ from .. import schemas
 router = APIRouter()
 
 
-@router.get("/products", response_model=List[schemas.DisplayProduct])
+@router.get("/products", response_model=List[schemas.DisplayProduct], tags=["Products"])
 def get_products(db: Session = Depends(get_db)):
     products = db.query(models.Product).all()
     return products
 
 
 # --------------------------------------------------------------------------------
-@router.get("/product/{id}", response_model=schemas.DisplayProduct)
+@router.get("/product/{id}", response_model=schemas.DisplayProduct, tags=["Products"])
 def get_product(id, response: Response, db: Session = Depends(get_db)):
     product = db.query(models.Product).filter(models.Product.id == id).first()
     if not product:
@@ -28,7 +28,7 @@ def get_product(id, response: Response, db: Session = Depends(get_db)):
 
 
 # --------------------------------------------------------------------------------
-@router.delete("/product/{id}")
+@router.delete("/product/{id}", tags=["Products"])
 def delete_product(id, db: Session = Depends(get_db)):
     product = (
         db.query(models.Product)
@@ -39,7 +39,7 @@ def delete_product(id, db: Session = Depends(get_db)):
     return {"Data deleted"}
 
 
-@router.put("/product/{id}")
+@router.put("/product/{id}", tags=["Products"])
 def update_product(id, request: schemas.Product, db: Session = Depends(get_db)):
     product = db.query(models.Product).filter(models.Product.id == id)
     if not product.first():
@@ -49,7 +49,7 @@ def update_product(id, request: schemas.Product, db: Session = Depends(get_db)):
     return {"Product successfully updated"}
 
 
-@router.post("/product", status_code=status.HTTP_201_CREATED)
+@router.post("/product", status_code=status.HTTP_201_CREATED, tags=["Products"])
 def add_product(request: schemas.Product, db: Session = Depends(get_db)):
     new_product = models.Product(
         name=request.name,
@@ -62,6 +62,3 @@ def add_product(request: schemas.Product, db: Session = Depends(get_db)):
     db.refresh(new_product)
 
     return request
-
-
-# -----------------------------------------------------------------------------

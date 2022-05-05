@@ -1,35 +1,23 @@
-from fastapi import FastAPI, status, Response, HTTPException
-from fastapi.params import Depends
-from sqlalchemy.orm import Session
-from . import schemas
+from fastapi import FastAPI
 from . import models
-from .database import engine, SessionLocal, get_db
-from typing import List
+from .database import engine
 from passlib.context import CryptContext
-from .routers import product
+from .routers import product, seller
 
 
-app = FastAPI()
-
-models.Base.metadata.create_all(engine)
+app = FastAPI(
+    title="ChimichangApp",
+    version="0.0.1",
+    terms_of_service="http://example.com/terms/",
+    license_info={
+        "name": "Apache 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
+    },
+)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 app.include_router(product.router)
+app.include_router(seller.router)
 
-
-@app.post(
-    "/seller", response_model=schemas.DisplaySeller, status_code=status.HTTP_201_CREATED
-)
-def create_seller(request: schemas.Seller, db: Session = Depends(get_db)):
-    hashedpassword = pwd_context.hash(request.password)
-    new_seller = models.Seller(
-        username=request.username,
-        email=request.email,
-        password=hashedpassword,
-    )
-
-    db.add(new_seller)
-    db.commit()
-    db.refresh(new_seller)
-    return new_seller
+models.Base.metadata.create_all(engine)
